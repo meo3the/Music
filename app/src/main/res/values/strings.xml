@@ -1,3 +1,19 @@
 <resources>
-    <string name="app_name"></string>
+    <string name="appName">Music</string>
+
+    <!--Drawer-->
+    <string name="drawerOpen">Open navigation drawer</string>
+    <string name="drawerClose">Close navigation drawer</string>
+
+    <!--Navigation-->
+    <string name="navHome">Home</string>
+    <string name="navPlayQueue">Play queue</string>
+    <string name="navPlaylist">Playlist</string>
+    <string name="navArtist">Artists</string>
+    <string name="navAlbum">Albums</string>
+    <string name="navSong">Songs</string>
+    <string name="navGenres">Genres</string>
+    <string name="navSetting">Setting</string>
+    <string name="navHelp">Help</string>
+    <string name="actionSearch">Search</string>
 </resources>

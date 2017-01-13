@@ -15,4 +15,6 @@
     <color name="colorDarkTextDisable">#61000000</color>
     <color name="colorDarkTextHint">#61000000</color>
     <color name="colorDarkTextDivider">#1F000000</color>
+    <!--CardView-->
+    <color name="cardViewBackgroundColor">#757575</color>
 </resources>

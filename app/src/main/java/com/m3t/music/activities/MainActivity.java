@@ -1,6 +1,7 @@
 package com.m3t.music.activities;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -9,13 +10,15 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
+import android.view.MenuItem;
 
 import com.m3t.myapplication.R;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity
+        implements NavigationView.OnNavigationItemSelectedListener {
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
@@ -33,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         init();
+
 
 //        NavigationView navigationView = (NavigationView) findViewById(R.id.navView);
 //        navigationView.setNavigationItemSelectedListener(this);
@@ -64,5 +68,37 @@ public class MainActivity extends AppCompatActivity {
         if (getSupportActionBar() != null)
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         toggle.syncState();
+        navView.setNavigationItemSelectedListener(this);
+    }
+
+
+    @SuppressWarnings("StatementWithEmptyBody")
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        int id = item.getItemId();
+
+        switch (id) {
+            case R.id.navHome:
+                break;
+            case R.id.navPlayQueue:
+                break;
+            case R.id.navPlaylist:
+                break;
+            case R.id.navArtist:
+                break;
+            case R.id.navAlbum:
+                break;
+            case R.id.navSong:
+                break;
+            case R.id.navGenre:
+                break;
+            case R.id.navSetting:
+                break;
+            case R.id.navHelp:
+                break;
+        }
+
+        drawer.closeDrawer(GravityCompat.START);
+        return true;
     }
 }

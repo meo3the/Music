@@ -22,7 +22,7 @@
             android:id="@+id/navSong"
             android:title="@string/navSong" />
         <item
-            android:id="@+id/genre"
+            android:id="@+id/navGenre"
             android:title="@string/navGenres" />
     </group>
     <group android:id="@+id/contactGroup">

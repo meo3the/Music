@@ -20,4 +20,7 @@
     <string name="open">Open</string>
     <string name="recently_played">Recently Played</string>
     <string name="newly_added">Newly added</string>
+    <string name="album_cover">Album cover</string>
+    <string name="more_options">More Options</string>
+    <string name="playing_song">Playing song</string>
 </resources>

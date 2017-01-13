@@ -5,27 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    android:orientation="vertical"
-    app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context=".MainActivity">
+    tools:context="com.m3t.music.activities.MainActivity">
 
     <include layout="@layout/toolbar_main" />
-
-    <android.support.v4.widget.NestedScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <RelativeLayout
-            android:id="@+id/containMain"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:paddingTop="16dp"
-            android:paddingStart="64dp"
-            android:paddingEnd="64dp"
-            android:paddingBottom="16dp"
-            tools:context=".MainActivity">
-        </RelativeLayout>
-    </android.support.v4.widget.NestedScrollView>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fabShuffle"
@@ -34,5 +16,93 @@
         android:layout_gravity="bottom|end"
         android:layout_margin="16dp"
         app:srcCompat="@drawable/ic_shuffle_white_24dp" />
+
+    <android.support.v4.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/transparent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <RelativeLayout
+            android:id="@+id/containMain"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingTop="100dp"
+            tools:context=".MainActivity">
+
+            <RelativeLayout
+                android:id="@+id/titlePlayQueue"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp">
+
+                <Button
+
+                    android:id="@+id/btnOpenPlayQueue"
+                    android:layout_width="64dp"
+                    android:layout_height="32dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerInParent="true"
+                    android:layout_gravity="center|end"
+                    android:background="@drawable/background_button_open_playlist"
+                    android:text="@string/open"
+                    android:textColor="@color/colorTextPrimary" />
+
+                <TextView
+                    android:id="@+id/textView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBaseline="@+id/btnOpenPlayQueue"
+                    android:layout_alignBottom="@+id/btnOpenPlayQueue"
+                    android:layout_alignParentStart="true"
+                    android:layout_toStartOf="@+id/btnOpenPlayQueue"
+                    android:text="@string/play_queue"
+                    android:textColor="@color/colorDarkTextPrimary"
+                    android:textStyle="bold" />
+
+            </RelativeLayout>
+
+            <TextView
+                android:id="@+id/titleRecentlyPlayed"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/rvPlayQueue"
+                android:padding="16dp"
+                android:text="@string/recently_played"
+                android:textColor="@color/colorDarkTextPrimary"
+                android:textStyle="bold" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/rvRecentlyPlayed"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/titleRecentlyPlayed" />
+
+            <TextView
+                android:id="@+id/titleNewlyAdded"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/rvRecentlyPlayed"
+                android:padding="16dp"
+                android:text="@string/newly_added"
+                android:textColor="@color/colorDarkTextPrimary"
+                android:textStyle="bold" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/rvNewlyAdded"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/titleNewlyAdded" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/rvPlayQueue"
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/titlePlayQueue"
+                android:orientation="horizontal"
+                app:layoutManager="android.support.v7.widget.LinearLayoutManager" />
+        </RelativeLayout>
+    </android.support.v4.widget.NestedScrollView>
 
 </android.support.design.widget.CoordinatorLayout>

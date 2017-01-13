@@ -16,4 +16,8 @@
     <string name="navSetting">Setting</string>
     <string name="navHelp">Help</string>
     <string name="actionSearch">Search</string>
+    <string name="play_queue">Play queue</string>
+    <string name="open">Open</string>
+    <string name="recently_played">Recently Played</string>
+    <string name="newly_added">Newly added</string>
 </resources>

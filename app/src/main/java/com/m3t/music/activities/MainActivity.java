@@ -37,10 +37,6 @@ public class MainActivity extends AppCompatActivity
 
         init();
 
-
-//        NavigationView navigationView = (NavigationView) findViewById(R.id.navView);
-//        navigationView.setNavigationItemSelectedListener(this);
-
     }
 
     @Override

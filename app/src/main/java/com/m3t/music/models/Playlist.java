@@ -1,7 +1,8 @@
 package com.m3t.music.models;
 
 /**
- * Created by NamVp aka meo3the on 13/01/2017.
+ * Created by namvp aka meo_3_the.
+ *
  */
 
 public class Playlist {

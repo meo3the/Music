@@ -5,10 +5,21 @@ import android.graphics.BitmapFactory;
 import android.media.MediaMetadataRetriever;
 
 /**
- * Created by NamVp aka meo3the on 13/01/2017.
+ * Created by namvp aka meo_3_the.
+ * <p>
+ * Class Song.java
  */
 
 public class Song {
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    private long id;
     private String filePath;
     private String songName;
     private String album;
@@ -21,6 +32,12 @@ public class Song {
     public Song(String filePath) {
         this.filePath = filePath;
         getMediaMetadata();
+    }
+
+    public Song(long id, String songName, String artist) {
+        this.id = id;
+        this.songName = songName;
+        this.artist = artist;
     }
 
     private void getMediaMetadata() {
@@ -64,4 +81,8 @@ public class Song {
         return genre;
     }
 
+    @Override
+    public String toString() {
+        return songName + " - " + artist;
+}
 }

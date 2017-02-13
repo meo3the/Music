@@ -1,6 +1,15 @@
 package com.m3t.music.activities;
 
+import android.content.ComponentName;
+import android.content.ContentResolver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.IBinder;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -9,16 +18,26 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.MediaController;
 
+import com.m3t.music.controlers.MusicController;
+import com.m3t.music.models.Song;
+import com.m3t.music.services.MusicService;
 import com.m3t.myapplication.R;
+
+import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, MediaController.MediaPlayerControl {
+
+    public static final String TAG = "MUSIC";
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
@@ -29,6 +48,32 @@ public class MainActivity extends AppCompatActivity
     @BindView(R.id.drawer)
     DrawerLayout drawer;
 
+    ArrayList<Song> songArrayList;
+    private boolean mBound = false;
+    private Intent playIntent;
+    private MusicService mService;
+    private MusicController mController;
+
+
+    private ServiceConnection musicConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            MusicService.MusicBinder binder = (MusicService.MusicBinder) service;
+
+            //  get Service
+            mService = binder.getService();
+
+            // pass list
+            mService.setPlaylist(songArrayList);
+            mBound = true;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            mBound = false;
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,7 +81,21 @@ public class MainActivity extends AppCompatActivity
         ButterKnife.bind(this);
 
         init();
+        setController();
 
+    }
+
+    @Override
+    protected void onStart() {
+        //  When Activity start
+        //  Set views up
+        super.onStart();
+
+        if (playIntent == null) {
+            playIntent = new Intent(this, MusicService.class);
+            bindService(playIntent, musicConnection, Context.BIND_AUTO_CREATE);
+            startService(playIntent);
+        }
     }
 
     @Override
@@ -57,6 +116,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void init() {
+        songArrayList = new ArrayList<>();
         setSupportActionBar(toolbar);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.drawerOpen, R.string.drawerClose);
@@ -65,6 +125,7 @@ public class MainActivity extends AppCompatActivity
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         toggle.syncState();
         navView.setNavigationItemSelectedListener(this);
+        queryAllSong();
     }
 
 
@@ -97,4 +158,60 @@ public class MainActivity extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
+    private void queryAllSong() {
+        ContentResolver musicResolver = getContentResolver();
+        Uri musicUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+        Cursor musicCursor = musicResolver.query(musicUri, null, null, null, null);
+        if (musicCursor != null && musicCursor.moveToFirst()) {
+            int mIdColumn = musicCursor.getColumnIndex(MediaStore.Audio.Media._ID);
+            int mTitleColumn = musicCursor.getColumnIndex(MediaStore.Audio.Media.TITLE);
+            int mArtistColumn = musicCursor.getColumnIndex(MediaStore.Audio.Media.ARTIST);
+
+            do {
+                long mId = musicCursor.getLong(mIdColumn);
+                String mTitle = musicCursor.getString(mTitleColumn);
+                String mArtist = musicCursor.getString(mArtistColumn);
+
+                if (!mTitle.contains("Facebook") && !mTitle.contains("Hangout"))
+                    songArrayList.add(new Song(mId, mTitle, mArtist));
+            } while (musicCursor.moveToNext());
+
+            musicCursor.close();
+
+            Log.d(TAG, songArrayList.toString());
+        }
+    }
+
+    private void setController() {
+        //  Set controller up
+        mController = new MusicController(this);
+        mController.setPrevNextListeners(v -> playNext(),
+                v -> playPrev());
+
+        mController.setMediaPlayer(this);
+        mController.setAnchorView(new View(this));
+        mController.setEnabled(true);
+    }
+
+    private void playPrev() {
+        mService.playPrev();
+        mController.show(0);
+    }
+
+    private void playNext() {
+        mService.playNext();
+        mController.show(0);
+    }
+
+    @Override
+    protected void onDestroy() {
+        stopService(playIntent);
+        mService = null;
+        mBound = false;
+
+        super.onDestroy();
+    }
+
+
 }

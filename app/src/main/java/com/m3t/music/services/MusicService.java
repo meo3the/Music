@@ -20,6 +20,7 @@ import com.m3t.music.models.Song;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Random;
 
 /**
  * Created by namvp aka meo_3_the.
@@ -34,6 +35,12 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
     private ArrayList<Song> playlist;
     private int position;
     private IBinder musicBind = new MusicBinder();
+
+    private String title;
+    private static final int NOTIFICATION_ID = 0001;
+
+    private boolean shuffle = false;
+    private Random mRandom = new Random();
 
     @Override
     public void onCreate() {
@@ -63,6 +70,20 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
         this.playlist = playlist;
     }
 
+    @Override
+    public void onCompletion(MediaPlayer mp) {
+        if (mMediaPlayer.getCurrentPosition() > 0) {
+            mp.reset();
+            playNext();
+        }
+    }
+
+    @Override
+    public boolean onError(MediaPlayer mp, int what, int extra) {
+        mMediaPlayer.reset();
+        return false;
+    }
+
     public class MusicBinder extends Binder {
         public MusicService getService() {
             return MusicService.this;
@@ -82,14 +103,14 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
         return super.onUnbind(intent);
     }
 
-    private void playSong() {
+    public void playSong() {
         //  Play a song
         mMediaPlayer.reset();
 
         //  Get the song
         Song playingSong = playlist.get(position);
         long currentSong = playingSong.getId();
-        String title = playingSong.getSongName();
+        title = playingSong.getSongName();
         Uri trackUri = ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, currentSong);
 
         //  Play the track
@@ -111,7 +132,6 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         // TODO: 14/02/2017 Build notification layout
     }
-
 
 
     public void setSong(int songIndex) {
@@ -153,8 +173,16 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
 
     public void playNext() {
         //  Skip to next
-        position++;
-        if (position >= playlist.size()) position = 0;
+        if (shuffle) {
+            int newSong = position;
+            while (newSong == position) {
+                newSong = mRandom.nextInt(playlist.size());
+            }
+            position = newSong;
+        } else {
+            position++;
+            if (position >= playlist.size()) position = 0;
+        }
         playSong();
     }
 
@@ -167,7 +195,11 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
 
     @Override
     public void onDestroy() {
-        // TODO: 14/02/2017 stop foreground 
+        // TODO: 14/02/2017 stop foreground
         super.onDestroy();
+    }
+
+    private void setShuffle() {
+        shuffle = !shuffle;
     }
 }

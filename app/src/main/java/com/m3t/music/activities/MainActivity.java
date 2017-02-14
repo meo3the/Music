@@ -54,6 +54,9 @@ public class MainActivity extends AppCompatActivity
     private MusicService mService;
     private MusicController mController;
 
+    private boolean paused = false;
+    private boolean playbackPaused = false;
+
 
     private ServiceConnection musicConnection = new ServiceConnection() {
         @Override
@@ -96,6 +99,28 @@ public class MainActivity extends AppCompatActivity
             bindService(playIntent, musicConnection, Context.BIND_AUTO_CREATE);
             startService(playIntent);
         }
+    }
+
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        paused = true;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (paused) {
+            setController();
+            paused = false;
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        mController.hide();
+        super.onStop();
     }
 
     @Override
@@ -196,11 +221,29 @@ public class MainActivity extends AppCompatActivity
 
     private void playPrev() {
         mService.playPrev();
+        if (playbackPaused) {
+            setController();
+            playbackPaused = false;
+        }
         mController.show(0);
     }
 
     private void playNext() {
         mService.playNext();
+        if (playbackPaused) {
+            setController();
+            playbackPaused = false;
+        }
+        mController.show(0);
+    }
+
+    private void pickSong(View view) {
+        mService.setSong(Integer.parseInt(view.getTag().toString()));
+        mService.playSong();
+        if (playbackPaused) {
+            setController();
+            playbackPaused = false;
+        }
         mController.show(0);
     }
 
@@ -229,6 +272,11 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
+    public int getAudioSessionId() {
+        return 0;
+    }
+
+    @Override
     public int getCurrentPosition() {
         if (mService != null && mBound && mService.isPlaying()) return mService.getPosition();
         return 0;
@@ -246,7 +294,13 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
+    public int getBufferPercentage() {
+        return 0;
+    }
+
+    @Override
     public void pause() {
+        playbackPaused = true;
         mService.pause();
     }
 
@@ -259,6 +313,5 @@ public class MainActivity extends AppCompatActivity
     public void start() {
         mService.go();
     }
-
 
 }

@@ -213,5 +213,52 @@ public class MainActivity extends AppCompatActivity
         super.onDestroy();
     }
 
+    @Override
+    public boolean canPause() {
+        return true;
+    }
+
+    @Override
+    public boolean canSeekBackward() {
+        return true;
+    }
+
+    @Override
+    public boolean canSeekForward() {
+        return true;
+    }
+
+    @Override
+    public int getCurrentPosition() {
+        if (mService != null && mBound && mService.isPlaying()) return mService.getPosition();
+        return 0;
+    }
+
+    @Override
+    public int getDuration() {
+        if (mService != null && mBound && mService.isPlaying()) return mService.getDuration();
+        return 0;
+    }
+
+    @Override
+    public boolean isPlaying() {
+        return mService != null && mBound && mService.isPlaying();
+    }
+
+    @Override
+    public void pause() {
+        mService.pause();
+    }
+
+    @Override
+    public void seekTo(int pos) {
+        mService.seek(pos);
+    }
+
+    @Override
+    public void start() {
+        mService.go();
+    }
+
 
 }

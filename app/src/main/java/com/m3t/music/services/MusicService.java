@@ -1,5 +1,6 @@
 package com.m3t.music.services;
 
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.ContentUris;
 import android.content.Intent;
@@ -14,6 +15,7 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.View;
 
+import com.m3t.music.activities.MainActivity;
 import com.m3t.music.models.Song;
 
 import java.io.IOException;
@@ -87,6 +89,7 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
         //  Get the song
         Song playingSong = playlist.get(position);
         long currentSong = playingSong.getId();
+        String title = playingSong.getSongName();
         Uri trackUri = ContentUris.withAppendedId(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, currentSong);
 
         //  Play the track
@@ -103,7 +106,13 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
     public void onPrepared(MediaPlayer mp) {
         //  Start playback
         mp.start();
+
+        Intent notIntent = new Intent(this, MainActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        // TODO: 14/02/2017 Build notification layout
     }
+
+
 
     public void setSong(int songIndex) {
         //  Set the position for the current track
@@ -156,5 +165,9 @@ public class MusicService extends Service implements MediaPlayer.OnPreparedListe
         playSong();
     }
 
-
+    @Override
+    public void onDestroy() {
+        // TODO: 14/02/2017 stop foreground 
+        super.onDestroy();
+    }
 }
